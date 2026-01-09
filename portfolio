@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chandu Vangara | Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style> 
+        :root {
+            --bg: #000000;
+            --nav-bg: rgba(20, 20, 20, 0.9);
+            --card-bg: #0f0f0f;
+            --text: #ffffff;
+            --accent: #38bdf8;
+            --secondary: #a1a1aa;
+            --border: #262626;
+            --project-blue: #111827;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0; padding: 0;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        /* NAVIGATION BAR */
+        .nav-wrapper {
+            position: fixed;
+            top: 25px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 1000;
+        }
+        nav {
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 8px 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            opacity: 0.6;
+            transition: 0.3s;
+        }
+        nav a:hover { opacity: 1; color: var(--accent); }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 140px 20px 60px; }
+        
+        header { text-align: center; margin-bottom: 100px; }
+        h1 { font-size: 4rem; letter-spacing: -3px; margin: 0; font-weight: 600; }
+        .accent { color: var(--accent); }
+
+        section { margin-bottom: 120px; padding-top: 100px; margin-top: -100px; } 
+        h2 { font-size: 1.8rem; margin-bottom: 40px; color: var(--text); border-left: 4px solid var(--accent); padding-left: 20px; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
+        
+        /* Horizontal Skills Layout */
+        .skills-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 20px; 
+        }
+
+        @media (max-width: 850px) {
+            .skills-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 2.8rem; }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px;
+            transition: 0.4s;
+            position: relative;
+        }
+
+        /* SCROLL REVEAL & GLOW */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal.active:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.2);
+        }
+
+        /* VIEW DETAILS LINK */
+        .view-details-link {
+            position: absolute;
+            bottom: 25px;
+            left: 30px;
+            color: var(--accent);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--accent);
+            padding-bottom: 2px;
+        }
+
+        /* EXPANDABLE SYSTEM */
+        .expandable {
+            cursor: pointer;
+            overflow: hidden;
+            padding-bottom: 75px;
+        }
+        .expandable.expanded {
+            grid-column: 1 / -1 !important; 
+            background-color: var(--project-blue);
+            cursor: default;
+            transform: none !important;
+            padding: 45px;
+        }
+        .expandable.expanded .view-details-link { display: none; }
+
+        .hidden-content { display: none; margin-top: 25px; }
+        .expandable.expanded .hidden-content { display: block; }
+        .expandable.expanded .preview-info { display: none; }
+
+        .item-list { list-style: none; padding: 0; margin: 0; }
+        .item-list li { margin-bottom: 10px; font-size: 0.95rem; color: var(--secondary); display: block; }
+        .item-list li::before { content: "•"; color: var(--accent); margin-right: 10px; }
+
+        .blue-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        
+        .close-btn {
+            display: none; position: absolute; top: 20px; right: 20px;
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            color: white; padding: 8px 18px; border-radius: 20px; cursor: pointer; z-index: 10;
+        }
+        .expandable.expanded .close-btn { display: block; }
+
+        .project-section-title { 
+            color: var(--accent); text-transform: uppercase; font-size: 0.85rem; 
+            letter-spacing: 1.5px; margin-top: 20px; margin-bottom: 8px; 
+            display: block; font-weight: 700; 
+        }
+        .project-text-block { 
+            color: #cbd5e1; font-size: 1rem; margin-bottom: 15px; 
+            line-height: 1.7; max-width: 950px;
+        }
+        .tag-row { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        .tag-pill { 
+            background: rgba(56, 189, 248, 0.15); color: var(--accent); border: 1px solid var(--accent);
+            padding: 4px 14px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; 
+        }
+
+        footer { text-align: center; padding: 80px 20px; color: var(--secondary); border-top: 1px solid var(--border); }
+    </style>
+</head>
+<body>
+
+    <div class="nav-wrapper">
+        <nav>
+            <a href="#about">About</a>
+            <a href="#education">Education</a>
+            <a href="#experience">Experience</a>
+            <div style="color: var(--accent); font-size: 1.1rem;"><i class="fas fa-bolt"></i></div>
+            <a href="#skills">Skills</a>
+            <a href="#projects">Projects</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Chandu <span class="accent">Vangara</span></h1>
+            <p style="color: var(--secondary); font-size: 1.3rem; margin-top: 15px;">STEM Engineer | ECE Graduate | Robotics Specialist</p>
+            <p style="color: var(--secondary);">📍 Chittoor, Andhra Pradesh | 📧 chanduvangara2002@gmail.com</p>
+        </header> 
+ <section id="about">
+    <h2>About Me</h2>
+    <p>
+        I am an Electronics and Communication Engineering graduate with strong hands-on
+        experience in embedded systems and robotics. Currently working as a STEM
+        Engineer at STEMX India, I have mentored 3,000+ students through practical,
+        project-based learning. I enjoy designing microcontroller-based systems,
+        robots, and real-world electronic solutions using Arduino and related tools. I
+        also have basic knowledge in <strong>PCB designing</strong>.
+    </p>
+</section>
+
+
+        <section id="education">
+            <h2>Education</h2>
+            <div class="grid">
+                <div class="card reveal">
+                    <h3 class="accent">B.Tech in ECE</h3>
+                    <p>RGUKT - RK Valley</p>
+                    <p style="color: var(--secondary);">2021 – 2025 | CGPA: 7.5</p>
+                </div>
+                <div class="card reveal">
+                    <h3 class="accent">Pre-University (MPC)</h3>
+                    <p>RGUKT - RK Valley</p>
+                    <p style="color: var(--secondary);">2019 – 2021 | CGPA: 8.4</p>
+                </div>
+                <div class="card reveal">
+                    <h3 class="accent">Secondary School (SSC)</h3>
+                    <p>ZPHS PDVK Nalagampalli</p>
+                    <p style="color: var(--secondary);">2018 – 2019 | GPA: 9.8</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="experience">
+            <h2>Experience</h2>
+            <div class="expandable card reveal" onclick="toggleExpand(this)">
+                <button class="close-btn" onclick="event.stopPropagation(); toggleExpand(this.parentElement)">Close</button>
+                <div class="blue-header">
+                    <h3 class="accent" style="margin:0">STEM Engineer – STEMX India</h3>
+                </div>
+                <p>May 2025 – Present</p>
+                <p class="preview-info" style="color: var(--secondary); font-size: 0.9rem;">🏆 2× Best Performer | Mentored 3,000+ Students</p>
+                <div class="view-details-link">View Details</div>
+                <div class="hidden-content">
+                    <ul class="item-list" style="color: #cbd5e1;"> 
+                        <li><strong style="color: #fff;">🏆 2× Best Performer of the Month</strong></li>
+                        <li>Mentored 3,000+ students across Hyderabad with hands-on training.</li> 
+                        <li>Completed 50+ Embedded Systems & Robotics projects.</li>
+                        <li>Worked extensively on practical electronics and embedded learning modules.</li>
+                        <li>Attended Hitex Educational Summit for advanced teaching methodologies.</li>
+                        <li>Attended TCC JCI Event for professional networking.</li>
+                        <li>Participant in T-CHIP (Technology Chip Innovation Program).</li>
+                        <li><strong>Trainer:</strong> Conducted a 2-day workshop at RGMCET College, Nandyal (Line Follower & Obstacle Avoidance Robots).</li>  <li style="list-style:none; margin-top:12px;">
+    <strong>Mentoring Schools</strong>
+    <span class="tag-pill" style="margin-left:8px;">TG & AP</span>
+
+    <div style="
+        margin-top:10px;
+        display:grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap:8px;
+        font-size:0.85rem;
+        color:var(--secondary);
+    ">
+
+        <div class="card" style="padding:10px;">
+            📍 <strong style="color:var(--accent)">T.I.M.E. School</strong>, Kandlakoya – Hyderabad, Telangana<br>
+            🌐 <a href="https://timeschools.com/kk-school-field-trip.html" target="_blank" style="color:var(--accent); font-size:0.8rem;">
+                timeschools.com
+            </a>
+        </div>
+
+        <div class="card" style="padding:10px;">
+            📍 <strong style="color:var(--accent)">Geethanjali Talent School</strong>, Kukatpally – Hyderabad, Telangana<br>
+            🌐 <a href="https://geetanjalitalentschool.com" target="_blank" style="color:var(--accent); font-size:0.8rem;">
+                geetanjalitalentschool.com
+            </a>
+        </div>
+
+        <div class="card" style="padding:10px;">
+            📍 <strong style="color:var(--accent)">Abhaya Waldorf School</strong>, Kompally – Hyderabad, Telangana<br>
+            🌐 <a href="https://www.abhayaschool.com" target="_blank" style="color:var(--accent); font-size:0.8rem;">
+                abhayaschool.com
+            </a>
+        </div>
+
+        <div class="card" style="padding:10px;">
+            📍 <strong style="color:var(--accent)">Narayana School (Elite Branch)</strong>, Seethammadhara – Visakhapatnam, Andhra Pradesh<br>
+            🌐 <a href="https://www.narayanaschools.in/andhra-pradesh/vishakapatnam-krm-colony-elite-school" 
+               target="_blank" 
+               style="color:var(--accent); font-size:0.8rem;">
+                narayanaschools.in
+            </a>
+        </div>
+
+    </div>
+</li>
+
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills">
+            <h2>Skills</h2>
+            <div class="skills-grid">
+                <div class="card reveal">
+                    <h3 class="accent">Microcontrollers</h3>
+                    <ul class="item-list">
+                        <li>Arduino (Nano, Uno, Mega)</li>
+                        <li>ESP8266 & ESP32</li>
+                        <li>STM32 Development</li>
+                        <li>8086 Micro Processor</li>
+                    </ul>
+                </div>
+                <div class="card reveal">
+                    <h3 class="accent">Programming</h3>
+                    <ul class="item-list">
+                        <li>C & Embedded C</li>
+                        <li>HTML & CSS</li>
+                        <li>MATLAB Programming</li>
+                        <li>Hardware Logic Coding</li>
+                    </ul>
+                </div>
+                <div class="card reveal">
+                    <h3 class="accent">Tools & Tech</h3>
+                    <ul class="item-list">
+                        <li>Easy EDA (PCB Design)</li>
+                        <li>Tinker Cad & Arduino IDE</li>
+                        <li>I2C / SPI / UART</li>
+                        <li>MATLAB 2015A</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects">
+            <h2>Projects</h2>
+            <div class="grid">
+                
+                <div class="expandable card reveal" onclick="toggleExpand(this)">
+                    <button class="close-btn" onclick="event.stopPropagation(); toggleExpand(this.parentElement)">Close</button>
+                    <h3 class="accent">Speech Emotion Recognition</h3>
+                    <p class="preview-info">Digital Signal Processing system to classify human emotions via MATLAB.</p>
+                    <div class="view-details-link">View Details</div>
+                    <div class="hidden-content">
+                        <span class="project-section-title">Introduction</span>
+                        <p class="project-text-block">This project focuses on the development of a MATLAB-based system designed to accurately classify human emotions like happiness and anger from audio samples. It leverages digital signal processing to analyze vocal characteristics, providing an automated solution for emotion detection in smart devices.</p>
+                        <span class="project-section-title">Working</span>
+                        <p class="project-text-block">The system processes raw audio by analyzing frequency parameters like pitch and energy levels. It employs Mel-frequency cepstral coefficients (MFCC) to capture spectral features of the voice. These features are then compared against pre-defined statistical profiles to determine the likely emotional state.</p>
+                        <span class="project-section-title">My Role</span>
+                        <p class="project-text-block">I took the lead in the signal capture phase to ensure high-quality audio input for the algorithm. I implemented the core frequency analysis logic within the MATLAB environment and optimized the MFCC extraction process for faster computation. I also performed the final logic testing for result accuracy.</p>
+                        <div class="tag-row">
+                            <span class="tag-pill">MATLAB</span><span class="tag-pill">MFCC</span><span class="tag-pill">SIGNAL</span><span class="tag-pill">AUDIO</span><span class="tag-pill">DSP</span><span class="tag-pill">ANALYSIS</span><span class="tag-pill">LOGIC</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expandable card reveal" onclick="toggleExpand(this)">
+                    <button class="close-btn" onclick="event.stopPropagation(); toggleExpand(this.parentElement)">Close</button>
+                    <h3 class="accent">Line Follower Robot Car</h3>
+                    <p class="preview-info">Autonomous navigation using IR sensors and path tracking logic.</p>
+                    <div class="view-details-link">View Details</div>
+                    <div class="hidden-content">
+                        <span class="project-section-title">Introduction</span>
+                        <p class="project-text-block">Designed and engineered an autonomous robot car capable of following a specific black path without any manual interference. The project serves as a foundational study in sensor fusion and mobile robotics, demonstrating how hardware can interpret physical markings on a surface.</p>
+                        <span class="project-section-title">Working</span>
+                        <p class="project-text-block">Infrared (IR) sensors are used to track surface reflectivity, identifying the black line against a lighter background. An Ultrasonic sensor is integrated to calculate the distance from physical obstacles in real-time. When an object is detected, the Arduino triggers a stop or safety reroute command.</p>
+                        <span class="project-section-title">My Role</span>
+                        <p class="project-text-block">I was responsible for the full hardware assembly and optimizing the sensor mounting positions for better accuracy. I developed the integration logic that allowed seamless switching between path tracking and obstacle avoidance modes. I served as the primary trainer for this specific project in various workshops.</p>
+                        <div class="tag-row">
+                            <span class="tag-pill">ARDUINO</span><span class="tag-pill">IR SENSORS</span><span class="tag-pill">ROBOTICS</span><span class="tag-pill">L298N</span><span class="tag-pill">EMBEDDED C</span><span class="tag-pill">NAVIGATION</span><span class="tag-pill">CONTROL</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expandable card reveal" onclick="toggleExpand(this)">
+                    <button class="close-btn" onclick="event.stopPropagation(); toggleExpand(this.parentElement)">Close</button>
+                    <h3 class="accent">Human Following Car</h3>
+                    <p class="preview-info">Smart proximity-based robot that tracks human movement.</p>
+                    <div class="view-details-link">View Details</div>
+                    <div class="hidden-content">
+                        <span class="project-section-title">Introduction</span>
+                        <p class="project-text-block">Engineered a sophisticated robotic car designed to lock onto and track a human subject automatically. It utilizes non-contact sensing to maintain a fixed distance while following the user, demonstrating the practical application of tracking algorithms in personal assistant robotics.</p>
+                        <span class="project-section-title">Working</span>
+                        <p class="project-text-block">Multiple ultrasonic sensors detect the presence of an object within a specific safety range. Complementary IR sensors help the robot determine the horizontal direction of the human's movement. The microcontroller processes these inputs to adjust the motor speeds for smooth, responsive following behavior.</p>
+                        <span class="project-section-title">My Role</span>
+                        <p class="project-text-block">I designed the sensor array layout to maximize the robot's detection field of view. I developed the conditional logic that successfully differentiates human movement from static environmental obstacles. I also fine-tuned the motor response times to ensure the car stays responsive during sharp turns.</p>
+                        <div class="tag-row">
+                            <span class="tag-pill">ULTRASONIC</span><span class="tag-pill">TRACKING</span><span class="tag-pill">PROXIMITY</span><span class="tag-pill">AUTOMATION</span><span class="tag-pill">MOTORS</span><span class="tag-pill">SENSORS</span><span class="tag-pill">LOGIC</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expandable card reveal" onclick="toggleExpand(this)">
+                    <button class="close-btn" onclick="event.stopPropagation(); toggleExpand(this.parentElement)">Close</button>
+                    <h3 class="accent">WiFi Controlled Car</h3>
+                    <p class="preview-info">IoT-based vehicle control via ESP8266/ESP32 web server.</p>
+                    <div class="view-details-link">View Details</div>
+                    <div class="hidden-content">
+                        <span class="project-section-title">Introduction</span>
+                        <p class="project-text-block">Created an IoT-based vehicle that can be controlled from any browser-enabled device via a local network. By leveraging high-speed WiFi connectivity, this project eliminates the distance limitations found in standard Bluetooth-controlled vehicles, paving the way for remote monitoring.</p>
+                        <span class="project-section-title">Working</span>
+                        <p class="project-text-block">An ESP module acts as a local web server, hosting a custom-coded control interface. When the user interacts with the UI on their smartphone, the module receives HTTP requests. It then interprets these signals into specific movement commands for the vehicle's motor driver system.</p>
+                        <span class="project-section-title">My Role</span>
+                        <p class="project-text-block">I configured the ESP module to host both the Access Point and the Web Server functionality. I designed the basic HTML interface for intuitive directional control by the end-user. I implemented the motor control firmware using the Arduino IDE and optimized the signal stability for outdoor use.</p>
+                        <div class="tag-row">
+                            <span class="tag-pill">ESP8266</span><span class="tag-pill">IOT</span><span class="tag-pill">WIFI</span><span class="tag-pill">WEB SERVER</span><span class="tag-pill">HTTP</span><span class="tag-pill">HTML</span><span class="tag-pill">FIRMWARE</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expandable card reveal" onclick="toggleExpand(this)">
+                    <button class="close-btn" onclick="event.stopPropagation(); toggleExpand(this.parentElement)">Close</button>
+                    <h3 class="accent">Bluetooth Controlled Car</h3>
+                    <p class="preview-info">Wireless robotic control using mobile app and HC-05 module.</p>
+                    <div class="view-details-link">View Details</div>
+                    <div class="hidden-content">
+                        <span class="project-section-title">Introduction</span>
+                        <p class="project-text-block">Designed a wireless robotic system that allows users to control car movements through a custom mobile application. The project successfully bridges mobile software interfaces with hardware actuators, focusing on low-latency serial communication for real-time driving control.</p>
+                        <span class="project-section-title">Working</span>
+                        <p class="project-text-block">The HC-05 Bluetooth module receives serial data strings from a smartphone application. The microcontroller processes these incoming characters and activates the corresponding GPIO pins. These signals tell the motor driver which wheels to spin and in which direction to maintain a 10-meter stable range.</p>
+                        <span class="project-section-title">My Role</span>
+                        <p class="project-text-block">I executed the hardware implementation and designed an efficient power management system for the motors. I handled the motor driver interfacing to ensure sufficient wheel torque for various surfaces. I also debugged the serial protocol to prevent signal lag and command overlaps during operation.</p>
+                        <div class="tag-row">
+                            <span class="tag-pill">HC-05</span><span class="tag-pill">BLUETOOTH</span><span class="tag-pill">SERIAL</span><span class="tag-pill">UART</span><span class="tag-pill">WIRELESS</span><span class="tag-pill">MOTORS</span><span class="tag-pill">MOBILE</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expandable card reveal" onclick="toggleExpand(this)">
+                    <button class="close-btn" onclick="event.stopPropagation(); toggleExpand(this.parentElement)">Close</button>
+                    <h3 class="accent">I2C and SPI Communication</h3>
+                    <p class="preview-info">Implementation of multi-node Master/Slave protocols.</p>
+                    <div class="view-details-link">View Details</div>
+                    <div class="hidden-content">
+                        <span class="project-section-title">Introduction</span>
+                        <p class="project-text-block">Designed a robust communication bridge between multiple microcontrollers using standard industry protocols. The project explores the speed, distance, and reliability trade-offs between I2C and SPI, allowing for a multi-node sensor network to report back to a single master controller.</p>
+                        <span class="project-section-title">Working</span>
+                        <p class="project-text-block">The master device initiates clock pulses and data addresses via the I2C bus to find slaves. Slave devices respond with sensor data packets using the high-speed synchronous SPI interface. Logic level converters ensure voltage compatibility across different hardware while preventing data signal collisions on the bus lines.</p>
+                        <span class="project-section-title">My Role</span>
+                        <p class="project-text-block">I designed the wiring architecture to ensure perfect protocol synchronization across nodes. I wrote the Master/Slave firmware in Embedded C to manage the data buffers effectively. I verified data integrity using an oscilloscope during signal transmission and optimized the baud rate for stable transfers.</p>
+                        <div class="tag-row">
+                            <span class="tag-pill">I2C</span><span class="tag-pill">SPI</span><span class="tag-pill">PROTOCOLS</span><span class="tag-pill">DATA</span><span class="tag-pill">FIRMWARE</span><span class="tag-pill">MASTER</span><span class="tag-pill">SLAVE</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expandable card reveal" onclick="toggleExpand(this)">
+                    <button class="close-btn" onclick="event.stopPropagation(); toggleExpand(this.parentElement)">Close</button>
+                    <h3 class="accent">Smart Plant Watering</h3>
+                    <p class="preview-info">Automatic irrigation system using soil moisture detection.</p>
+                    <div class="view-details-link">View Details</div>
+                    <div class="hidden-content">
+                        <span class="project-section-title">Introduction</span>
+                        <p class="project-text-block">Created an automated irrigation system designed to optimize water usage in domestic gardening and agriculture. It monitors soil conditions in real-time to prevent plant dehydration, reducing manual labor while significantly improving overall plant health and growth efficiency.</p>
+                        <span class="project-section-title">Working</span>
+                        <p class="project-text-block">Soil moisture sensors measure the dielectric constant of the earth to determine current wetness. When moisture falls below a pre-set threshold, a relay is triggered to activate a submersible water pump. Once the sensor detects saturation, the system automatically cuts power to stop the water flow.</p>
+                        <span class="project-section-title">My Role</span>
+                        <p class="project-text-block">I integrated the sensor array and built the relay-based pump control circuit from scratch. I calibrated the moisture threshold levels for different plant types to ensure optimal watering. I also designed the power supply circuit to safely handle both 5V logic and 12V pump components.</p>
+                        <div class="tag-row">
+                            <span class="tag-pill">RELAY</span><span class="tag-pill">SOIL</span><span class="tag-pill">PUMP</span><span class="tag-pill">IRRIGATION</span><span class="tag-pill">AUTOMATION</span><span class="tag-pill">SENSORS</span><span class="tag-pill">AGRICULTURE</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expandable card reveal" onclick="toggleExpand(this)">
+                    <button class="close-btn" onclick="event.stopPropagation(); toggleExpand(this.parentElement)">Close</button>
+                    <h3 class="accent">Smart Parking System</h3>
+                    <p class="preview-info">Hackathon prototype for real-time parking slot occupancy.</p>
+                    <div class="view-details-link">View Details</div>
+                    <div class="hidden-content">
+                        <span class="project-section-title">Introduction</span>
+                        <p class="project-text-block">Developed a prototype for smart cities intended to solve modern parking congestion issues in urban areas. The system provides real-time updates on slot availability, reducing the time spent searching for parking and was a featured project in a regional-level technical hackathon.</p>
+                        <span class="project-section-title">Working</span>
+                        <p class="project-text-block">Ultrasonic sensors are placed above each parking slot to detect the presence of a vehicle. These sensors send occupancy data to a central Arduino using an I2C multiplexer. An LCD display at the entrance shows available spaces, while local LEDs provide visual feedback for each individual slot.</p>
+                        <span class="project-section-title">My Role</span>
+                        <p class="project-text-block">I built the sensor array hardware and implemented the I2C multiplexing logic to handle multiple inputs simultaneously. I designed the display interface for clear communication and optimized the code to reduce detection latency during the live hackathon demonstration and testing phases.</p>
+                        <div class="tag-row">
+                            <span class="tag-pill">IOT</span><span class="tag-pill">ULTRASONIC</span><span class="tag-pill">MULTIPLEX</span><span class="tag-pill">HACKATHON</span><span class="tag-pill">LCD</span><span class="tag-pill">SMART CITY</span><span class="tag-pill">DETECTION</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="contact" style="text-align: center;">
+            <h2>Contact</h2>
+            <div style="display: flex; justify-content: center; gap: 40px; margin-top: 40px; font-size: 2.5rem;">
+                <a href="https://www.linkedin.com/in/chandu-vangara-785005321" target="_blank" style="color:var(--secondary)"><i class="fab fa-linkedin"></i></a>  
+<a href="mailto:chanduvangara2002@gmail.com"
+   style="color: var(--secondary); font-size: 2.5rem; text-decoration: none;"
+   title="Email">
+    <i class="fas fa-envelope"></i>
+</a>
+
+                <a href="https://wa.me/917674090200" target="_blank" style="color:var(--secondary)"><i class="fab fa-whatsapp"></i></a> <a href="https://github.com/ChanduVangara" target="_blank" style="color: #ffffff; font-size: 2.5rem; text-decoration: none;">
+    <i class="fab fa-github"></i>
+</a>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Chandu Vangara | ECE & Robotics Specialist</p>
+    </footer>
+
+    <script>
+        function toggleExpand(card) {
+            if (!card.classList.contains('expanded')) {
+                const parent = card.parentElement;
+                parent.querySelectorAll('.expandable').forEach(c => c.classList.remove('expanded'));
+                card.classList.add('expanded');
+                setTimeout(() => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            } else {
+                card.classList.remove('expanded');
+            }
+        }
+
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                if (elementTop < windowHeight - 100) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        reveal();
+    </script>
+</body>
+</html>
